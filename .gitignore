@@ -1,0 +1,7 @@
+client/*
+server/*
+
+conexiones/bin/*
+conexiones/obj/*
+
+!.gitkeep
