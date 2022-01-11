@@ -18,6 +18,8 @@
 
 #define INITIAL_SIZE 32
 
+typedef int socket_t;
+
 typedef struct {
 	uint32_t size;
     uint32_t next;
@@ -134,12 +136,12 @@ void reset_read_pointer (buffer_t* b);
 
 
 //CONEXIONES
-int crear_conexion(char* ip, char* puerto);
-int iniciar_servidor(char* ip, char* puerto);
-int esperar_cliente(int socket_servidor);
-void cerrar_conexion(int socket);
+socket_t crear_conexion(char* ip, char* puerto);
+socket_t iniciar_servidor(char* ip, char* puerto);
+socket_t esperar_cliente(socket_t socket_servidor);
+void cerrar_conexion(socket_t socket);
 
-void enviar_buffer (buffer_t* b, int socket);
-buffer_t* recibir_buffer (int socket);
+void enviar_buffer (buffer_t* b, socket_t socket);
+buffer_t* recibir_buffer (socket_t socket);
 
 #endif

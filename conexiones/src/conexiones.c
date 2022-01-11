@@ -174,7 +174,7 @@ struct addrinfo* generar_info(char* ip, char* puerto) {
 	return serv_info;
 }
 
-int crear_conexion(char* ip, char* puerto) {
+socket_t crear_conexion(char* ip, char* puerto) {
 	int socket_servidor;
 	struct addrinfo *serv_info = generar_info(ip, puerto);
 
@@ -188,7 +188,7 @@ int crear_conexion(char* ip, char* puerto) {
 	return socket_servidor;
 }
 
-int iniciar_servidor(char* ip, char* puerto) {
+socket_t iniciar_servidor(char* ip, char* puerto) {
 	int socket_servidor;
 	struct addrinfo *serv_info, *current_info;
 	serv_info = generar_info(ip, puerto);
@@ -212,11 +212,11 @@ int iniciar_servidor(char* ip, char* puerto) {
 	return socket_servidor;
 }
 
-void cerrar_conexion(int socket) {
+void cerrar_conexion(socket_t socket) {
 	close(socket);
 }
 
-int esperar_cliente(int socket_servidor) {
+socket_t esperar_cliente(socket_t socket_servidor) {
 	int socket_cliente;
 	struct sockaddr dir_cliente;
 	int tam_direccion = sizeof(struct sockaddr_in);
@@ -227,7 +227,7 @@ int esperar_cliente(int socket_servidor) {
 	return socket_cliente;
 }
 
-void enviar_buffer (buffer_t* b, int socket){
+void enviar_buffer (buffer_t* b, socket_t socket){
     void* bytes = serialize_buffer(b);
 
     send(socket, bytes, sizeof(b->next) + b->next, 0);
@@ -235,7 +235,7 @@ void enviar_buffer (buffer_t* b, int socket){
     free(bytes);
 }
 
-buffer_t* recibir_buffer (int socket){
+buffer_t* recibir_buffer (socket_t socket){
     buffer_t* b = malloc(sizeof(buffer_t));
     b->read = 0;
     b->has_fixed_size = true;
