@@ -161,70 +161,70 @@ void reset_read_pointer (buffer_t* b){
 //----------------------------------------------CONEXIONES-----------------------------------------------------------------------//
 
 struct addrinfo* generar_info(char* ip, char* puerto) {
-	struct addrinfo hints, *serv_info;
+    struct addrinfo hints, *serv_info;
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
 
-	if (getaddrinfo(ip, puerto, &hints, &serv_info) != SUCCESS)
-		perror("Error generando informacion para la ip y el puerto deseados");
+    if (getaddrinfo(ip, puerto, &hints, &serv_info) != SUCCESS)
+        perror("Error generando informacion para la ip y el puerto deseados");
 
-	return serv_info;
+    return serv_info;
 }
 
 socket_t crear_conexion(char* ip, char* puerto) {
-	int socket_servidor;
-	struct addrinfo *serv_info = generar_info(ip, puerto);
+    int socket_servidor;
+    struct addrinfo *serv_info = generar_info(ip, puerto);
 
-	if ((socket_servidor = socket(serv_info->ai_family, serv_info->ai_socktype,
-			serv_info->ai_protocol)) == FAILED
-			|| connect(socket_servidor, serv_info->ai_addr,
-					serv_info->ai_addrlen) == FAILED)
-		perror("Error creando conexion");
-	freeaddrinfo(serv_info);
+    if ((socket_servidor = socket(serv_info->ai_family, serv_info->ai_socktype,
+                                  serv_info->ai_protocol)) == FAILED
+        || connect(socket_servidor, serv_info->ai_addr,
+                   serv_info->ai_addrlen) == FAILED)
+        perror("Error creando conexion");
+    freeaddrinfo(serv_info);
 
-	return socket_servidor;
+    return socket_servidor;
 }
 
 socket_t iniciar_servidor(char* ip, char* puerto) {
-	int socket_servidor;
-	struct addrinfo *serv_info, *current_info;
-	serv_info = generar_info(ip, puerto);
+    int socket_servidor;
+    struct addrinfo *serv_info, *current_info;
+    serv_info = generar_info(ip, puerto);
 
-	for (current_info = serv_info; current_info != NULL; current_info =
-			current_info->ai_next) {
-		if ((socket_servidor = socket(current_info->ai_family,
-				current_info->ai_socktype, current_info->ai_protocol)) == FAILED)
-			continue;
-		if (bind(socket_servidor, current_info->ai_addr,
-				current_info->ai_addrlen) == FAILED) {
-			close(socket_servidor);
-			continue;
-		}
-		break;
-	}
-	if (listen(socket_servidor, SOMAXCONN) == FAILED)
-		perror("Error iniciando el servidor");
-	freeaddrinfo(serv_info);
+    for (current_info = serv_info; current_info != NULL; current_info =
+             current_info->ai_next) {
+        if ((socket_servidor = socket(current_info->ai_family,
+                                      current_info->ai_socktype, current_info->ai_protocol)) == FAILED)
+            continue;
+        if (bind(socket_servidor, current_info->ai_addr,
+                 current_info->ai_addrlen) == FAILED) {
+            close(socket_servidor);
+            continue;
+        }
+        break;
+    }
+    if (listen(socket_servidor, SOMAXCONN) == FAILED)
+        perror("Error iniciando el servidor");
+    freeaddrinfo(serv_info);
 
-	return socket_servidor;
+    return socket_servidor;
 }
 
 void cerrar_conexion(socket_t socket) {
-	close(socket);
+    close(socket);
 }
 
 socket_t esperar_cliente(socket_t socket_servidor) {
-	int socket_cliente;
-	struct sockaddr dir_cliente;
-	int tam_direccion = sizeof(struct sockaddr_in);
+    int socket_cliente;
+    struct sockaddr dir_cliente;
+    int tam_direccion = sizeof(struct sockaddr_in);
 
-	socket_cliente = accept(socket_servidor, &dir_cliente,
-			(socklen_t*) &tam_direccion);
+    socket_cliente = accept(socket_servidor, &dir_cliente,
+                            (socklen_t*) &tam_direccion);
 
-	return socket_cliente;
+    return socket_cliente;
 }
 
 void enviar_buffer (buffer_t* b, socket_t socket){
