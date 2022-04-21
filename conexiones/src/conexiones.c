@@ -21,9 +21,10 @@
 //SERIALIZACION
 
 buffer_t* buffer_create_fixed_size (size_t size){
-    buffer_t* b = malloc(sizeof(buffer_t));
+    buffer_t* b = (buffer_t*) malloc(sizeof(buffer_t));
     b->size = size;
     b->next = 0;
+    b->read = 0;
     b->data = malloc(size);
     b->has_fixed_size = true;
 
@@ -31,9 +32,10 @@ buffer_t* buffer_create_fixed_size (size_t size){
 }
 
 buffer_t* buffer_create (){
-    buffer_t* b = malloc(sizeof(buffer_t));
+    buffer_t* b = (buffer_t*) malloc(sizeof(buffer_t));
     b->size = INITIAL_SIZE;
     b->next = 0;
+    b->read = 0;
     b->data = malloc(INITIAL_SIZE);
     b->has_fixed_size = false;
 
@@ -106,7 +108,7 @@ char* deserialize_string (buffer_t *b){
 
     memcpy(&lenght, ((char*)b->data) + b->read, sizeof(lenght));
     b->read += sizeof(lenght);
-    x = malloc(lenght + 1);
+    x = (char*) malloc(lenght + 1);
     memcpy(x, ((char*)b->data) + b->read, lenght);
     x[lenght] = '\0';
     b->read += lenght;
@@ -236,7 +238,7 @@ void enviar_buffer (buffer_t* b, socket_t socket){
 }
 
 buffer_t* recibir_buffer (socket_t socket){
-    buffer_t* b = malloc(sizeof(buffer_t));
+    buffer_t* b = (buffer_t*) malloc(sizeof(buffer_t));
     b->read = 0;
     b->has_fixed_size = true;
 
